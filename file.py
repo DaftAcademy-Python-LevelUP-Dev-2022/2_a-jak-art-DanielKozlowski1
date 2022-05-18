@@ -1,5 +1,6 @@
-from typing import Dict
+from typing import Callable, Dict
 import itertools
+from functools import wraps
 
 def greeter(func):
     def greet(self):
@@ -68,6 +69,12 @@ def format_output(*required_keys):
     return decorator
 
 
-def add_method_to_instance(klass):
-    pass
+def add_method_to_instance(klass: object):
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(self):
+            return func()
+        setattr(klass, func.__name__, wrapper)
+        return func
+    return decorator
 
